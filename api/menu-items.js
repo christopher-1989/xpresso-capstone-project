@@ -79,7 +79,7 @@ menuItemsRouter.put('/:menuItemId', (req, res, next) => {
             }
 
             const sql = 'UPDATE MenuItem SET name = $name, description = $description, inventory = $inventory, price = $price, menu_id = $menuId WHERE MenuItem.id = $menuItemId'
-            const values = {$name: description, $description: description, $inventory: inventory, $price: price, $menuId: menuId, $menuItemId: req.params.menuItemId}
+            const values = {$name: name, $description: description, $inventory: inventory, $price: price, $menuId: menuId, $menuItemId: req.params.menuItemId}
             db.run(sql, values, function (err) {
                 if (err) {
                     next(err)
@@ -89,6 +89,15 @@ menuItemsRouter.put('/:menuItemId', (req, res, next) => {
                     })
                 }
             })
+        }
+    })
+})
+menuItemsRouter.delete('/:menuItemId', (req, res, next) => {
+    db.run(`DELETE FROM MenuItem WHERE MenuItem.id = ${req.params.menuItemId}`, (err) => {
+        if (err) {
+            next(err)
+        } else {
+            res.sendStatus(204)
         }
     })
 })

@@ -6,10 +6,10 @@ db.serialize(() => {
     db.run('DROP TABLE IF EXISTS Employee')
     db.run('CREATE TABLE Employee(' +
     'id INTEGER NOT NULL PRIMARY KEY, ' + 
-    'name TEST NOT NULL, ' +
+    'name TEXT NOT NULL, ' +
     'position TEXT NOT NULL, ' +
     'wage INTEGER NOT NULL, ' + 
-    'is_currently_employee INTEGER DEFAULT 1)')
+    'is_current_employee INTEGER DEFAULT 1)')
 })
 
 db.serialize(() => {
@@ -38,6 +38,6 @@ db.serialize(() => {
     'description TEXT NOT NULL, ' +
     'inventory INTEGER NOT NULL, ' +
     'price INTEGER NOT NULL, ' + 
-    'menu_id INTEGER DEFAULT 1, ' +
+    'menu_id INTEGER NOT NULL, ' +
     'FOREIGN KEY (`menu_id`) REFERENCES `Menu`(`id`))')
 })

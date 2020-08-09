@@ -1,6 +1,7 @@
 const express = require('express')
 const sqlite3 = require('sqlite3')
 const employeesRouter = express.Router()
+const timesheetsRouter = require('./timesheets.js')
 
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite')
 
@@ -89,4 +90,7 @@ employeesRouter.delete('/:employeeId', (req, res, next) => {
         )}
     })
 })
+
+employeesRouter.use('/:employeeId/timesheets', timesheetsRouter)
+
 module.exports = employeesRouter

@@ -35,7 +35,7 @@ timesheetsRouter.post('/', (req, res, next) => {
     const hours = req.body.timesheet.hours
     const rate = req.body.timesheet.rate
     const date = req.body.timesheet.date
-    const employeeId = req.body.timesheet.employeeId
+    const employeeId = req.params.employeeId
     const employeeSql = 'SELECT * FROM Employee WHERE Employee.id = $employeeId'
     const employeeValues = {$employeeId: employeeId}
     db.get(employeeSql, employeeValues, (err, employee) => {
@@ -60,8 +60,45 @@ timesheetsRouter.post('/', (req, res, next) => {
             })
         }
     })
-
-    
 })
 
+timesheetsRouter.put('/:timesheetId', (req, res, next) => {
+    const hours = req.body.timesheet.hours
+    const rate = req.body.timesheet.rate
+    const date = req.body.timesheet.date
+    const employeeId = req.params.employeeId
+    const employeeSql = 'SELECT * FROM Employee WHERE Employee.id = $employeeId'
+    const employeeValues = {$employeeId: employeeId}
+    db.get(employeeSql, employeeValues, (err, employee) => {
+        if (err) {
+            next(err)
+        } else {
+            if(!hours || !rate || !date || !employee) {
+                return res.sendStatus(400)
+            }
+
+            const sql = 'UPDATE Timesheet SET hours = $hours, rate = $rate, date = $date, employee_id = $employeeId WHERE Timesheet.id = $timesheetId'
+            const values = {$hours: hours, $rate: rate, $date: date, $employeeId: employeeId, $timesheetId: req.params.timesheetId}
+            db.run(sql, values, function (err) {
+                if (err) {
+                    next(err)
+                } else {
+                    db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${req.params.timesheetId}`, (err, timesheet) => {
+                        res.status(200).json({timesheet})
+                    })
+                }
+            })
+        }
+    })
+})
+
+timesheetsRouter.delete('/:timesheetId', (req, res, next) => {
+    db.run(`DELETE FROM Timesheet WHERE Timesheet.id = ${req.params.timesheetId}`, (err) => {
+        if (err) {
+            next(err)
+        } else {
+            res.sendStatus(204)
+        }
+    })
+})
 module.exports = timesheetsRouter
